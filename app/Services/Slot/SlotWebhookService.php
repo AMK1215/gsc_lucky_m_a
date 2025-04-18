@@ -13,9 +13,6 @@ class SlotWebhookService
             'ErrorMessage' => $responseCode->name,
             'Balance' => $balance,
             'BeforeBalance' => $before_balance,
-            //'Balance' => number_format($balance, 2, '.', ''), // Ensure two decimal places
-            //'BeforeBalance' => number_format($before_balance, 2, '.', ''),  // Ensure two decimal places
-
         ];
     }
 }

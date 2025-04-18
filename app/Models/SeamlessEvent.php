@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,8 +14,8 @@ class SeamlessEvent extends Model
         'user_id',
         'message_id',
         'product_id',
-        'request_time',
         'raw_data',
+        'request_time',
     ];
 
     protected $casts = [
@@ -29,5 +30,19 @@ class SeamlessEvent extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->created_at = Carbon::now('Asia/Yangon');
+            $model->updated_at = Carbon::now('Asia/Yangon');
+        });
+
+        static::updating(function ($model) {
+            $model->updated_at = Carbon::now('Asia/Yangon');
+        });
     }
 }

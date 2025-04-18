@@ -7,12 +7,12 @@ use App\Http\Requests\Slot\WebhookRequest;
 use App\Models\SeamlessTransaction;
 use App\Models\Wager;
 use App\Services\Slot\Dto\RequestTransaction;
-use Illuminate\Support\Facades\Log;
 
 class SlotWebhookValidator
 {
     protected ?SeamlessTransaction $existingTransaction;
 
+    // TODO: imp: chang with actual wager
     protected ?SeamlessTransaction $existingWager;
 
     protected float $totalTransactionAmount = 0;
@@ -27,8 +27,6 @@ class SlotWebhookValidator
      * @var RequestTransaction[]
      */
     protected $requestTransactions;
-
-    protected bool $hasDuplicateTransaction = false;
 
     protected function __construct(protected WebhookRequest $request) {}
 
@@ -47,12 +45,7 @@ class SlotWebhookValidator
 
             $this->requestTransactions[] = $requestTransaction;
 
-            // Check for duplicate transaction
             if ($requestTransaction->TransactionID && ! $this->isNewTransaction($requestTransaction)) {
-                Log::info('Duplicate transaction detected during validation', [
-                    'transaction_id' => $requestTransaction->TransactionID,
-                ]);
-                $this->hasDuplicateTransaction = true;
                 return $this->response(SlotWebhookResponseCode::DuplicateTransaction);
             }
 
@@ -72,11 +65,14 @@ class SlotWebhookValidator
 
     protected function isValidSignature()
     {
+        $method = $this->request->getMethodName();
         $operatorCode = $this->request->getOperatorCode();
         $requestTime = $this->request->getRequestTime();
-        $method = $this->request->getMethodName();
+
         $secretKey = $this->getSecretKey();
+
         $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+
         return $this->request->getSign() == $signature;
     }
 
@@ -96,29 +92,16 @@ class SlotWebhookValidator
 
     protected function isNewTransaction(RequestTransaction $transaction)
     {
-        $existing = $this->getExistingTransaction($transaction);
-        if ($existing) {
-            Log::info('Existing transaction found', [
-                'transaction_id' => $transaction->TransactionID,
-                'existing_id' => $existing->id,
-            ]);
-        }
-        return ! $existing;
+        return ! $this->getExistingTransaction($transaction);
     }
 
     public function getExistingTransaction(RequestTransaction $transaction)
     {
         if (! isset($this->existingTransaction)) {
-            $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)
-                ->first();
+            $this->existingTransaction = SeamlessTransaction::where('seamless_transaction_id', $transaction->TransactionID)->first();
         }
 
         return $this->existingTransaction;
-    }
-
-    public function hasDuplicateTransaction(): bool
-    {
-        return $this->hasDuplicateTransaction;
     }
 
     public function getAfterBalance()
@@ -146,7 +129,7 @@ class SlotWebhookValidator
 
     public function getRequestTransactions()
     {
-        return $this->requestTransactions ?? [];
+        return $this->requestTransactions;
     }
 
     protected function getSecretKey()

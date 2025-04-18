@@ -3,17 +3,19 @@
 namespace App\Services\Slot;
 
 use App\Enums\SlotWebhookResponseCode;
-use App\Http\Requests\Slot\BonuSlotWebhookRequest;
+use App\Http\Requests\Slot\SlotWebhookRequest;
 use App\Models\SeamlessTransaction;
 use App\Models\Wager;
 use App\Services\Slot\Dto\RequestTransaction;
+use Illuminate\Support\Facades\Log;
 
-class BonuSlotWebhookValidator
+
+class SeamlessTransactionWebhookValidator
 {
     protected ?SeamlessTransaction $existingTransaction;
 
     // TODO: imp: chang with actual wager
-    protected ?Wager $existingWager;
+    protected ?SeamlessTransaction $existingWager;
 
     protected float $totalTransactionAmount = 0;
 
@@ -28,7 +30,7 @@ class BonuSlotWebhookValidator
      */
     protected $requestTransactions;
 
-    protected function __construct(protected BonuSlotWebhookRequest $request) {}
+    protected function __construct(protected SlotWebhookRequest $request) {}
 
     public function validate()
     {
@@ -63,18 +65,39 @@ class BonuSlotWebhookValidator
         return $this;
     }
 
+    // protected function isValidSignature()
+    // {
+    //     $method = $this->request->getMethodName();
+    //     $operatorCode = $this->request->getOperatorCode();
+    //     $requestTime = $this->request->getRequestTime();
+
+    //     $secretKey = $this->getSecretKey();
+
+    //     $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+
+    //     return $this->request->getSign() == $signature;
+    // }
+
     protected function isValidSignature()
-    {
-        $method = $this->request->getMethodName();
-        $operatorCode = $this->request->getOperatorCode();
-        $requestTime = $this->request->getRequestTime();
+{
+    $method = $this->request->getMethodName();
+    $operatorCode = $this->request->getOperatorCode();
+    $requestTime = $this->request->getRequestTime();
 
-        $secretKey = $this->getSecretKey();
+    $secretKey = $this->getSecretKey();
 
-        $signature = md5($operatorCode.$requestTime.$method.$secretKey);
+    $signature = md5($operatorCode.$requestTime.$method.$secretKey);
 
-        return $this->request->getSign() == $signature;
+    if ($this->request->getSign() != $signature) {
+        Log::warning('Signature validation failed', [
+            'provided_sign' => $this->request->getSign(),
+            'expected_sign' => $signature,
+            'concatenated_string' => $operatorCode.$requestTime.$method.$secretKey,
+        ]);
     }
+
+    return $this->request->getSign() == $signature;
+}
 
     protected function isNewWager(RequestTransaction $transaction)
     {
@@ -84,7 +107,7 @@ class BonuSlotWebhookValidator
     public function getExistingWager(RequestTransaction $transaction)
     {
         if (! isset($this->existingWager)) {
-            $this->existingWager = Wager::where('seamless_wager_id', $transaction->WagerID)->first();
+            $this->existingWager = SeamlessTransaction::where('wager_id', $transaction->WagerID)->first();
         }
 
         return $this->existingWager;
@@ -95,14 +118,20 @@ class BonuSlotWebhookValidator
         return ! $this->getExistingTransaction($transaction);
     }
 
-    public function getExistingTransaction(RequestTransaction $transaction)
-    {
-        if (! isset($this->existingTransaction)) {
-            $this->existingTransaction = SeamlessTransaction::where('seamless_transaction_id', $transaction->TransactionID)->first();
-        }
+    // public function getExistingTransaction(RequestTransaction $transaction)
+    // {
+    //     if (! isset($this->existingTransaction)) {
+    //         $this->existingTransaction = SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
+    //     }
 
-        return $this->existingTransaction;
-    }
+    //     return $this->existingTransaction;
+    // }
+
+    public function getExistingTransaction(RequestTransaction $transaction)
+{
+    // Remove caching to ensure we always check the database for the current TransactionID
+    return SeamlessTransaction::where('transaction_id', $transaction->TransactionID)->first();
+}
 
     public function getAfterBalance()
     {
@@ -132,6 +161,11 @@ class BonuSlotWebhookValidator
         return $this->requestTransactions;
     }
 
+//     public function getRequestTransactions()
+// {
+//     return $this->requestTransactions ?? []; // Return an empty array if null
+// }
+
     protected function getSecretKey()
     {
         return config('game.api.secret_key');
@@ -158,7 +192,7 @@ class BonuSlotWebhookValidator
         return isset($this->response);
     }
 
-    public static function make(BonuSlotWebhookRequest $request)
+    public static function make(SlotWebhookRequest $request)
     {
         return new self($request);
     }
