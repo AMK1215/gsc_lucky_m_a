@@ -24,29 +24,58 @@ class WebhookRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+    // public function rules(): array
+    // {
+    //     $transaction_rules = [];
+
+    //     if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+    //         $transaction_rules['Transactions'] = ['nullable'];
+    //         if ($this->getMethodName() !== 'getbalance') {
+    //             $transaction_rules['Transaction'] = ['required'];
+    //         }
+    //     } else {
+    //         $transaction_rules['Transactions'] = ['required'];
+    //     }
+
+    //     return [
+    //         'MemberName' => ['required'],
+    //         'OperatorCode' => ['required'],
+    //         'ProductID' => ['required'],
+    //         'MessageID' => ['required'],
+    //         'RequestTime' => ['required'],
+    //         'Sign' => ['required'],
+    //         ...$transaction_rules,
+    //     ];
+    // }
+
     public function rules(): array
-    {
-        $transaction_rules = [];
+{
+    $transaction_rules = [];
 
-        if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
-            $transaction_rules['Transactions'] = ['nullable'];
-            if ($this->getMethodName() !== 'getbalance') {
-                $transaction_rules['Transaction'] = ['required'];
-            }
-        } else {
-            $transaction_rules['Transactions'] = ['required'];
+    if (in_array($this->getMethodName(), ['getbalance', 'buyin', 'buyout'])) {
+        $transaction_rules['Transactions'] = ['nullable'];
+        if ($this->getMethodName() !== 'getbalance') {
+            $transaction_rules['Transaction'] = ['required'];
         }
-
-        return [
-            'MemberName' => ['required'],
-            'OperatorCode' => ['required'],
-            'ProductID' => ['required'],
-            'MessageID' => ['required'],
-            'RequestTime' => ['required'],
-            'Sign' => ['required'],
-            ...$transaction_rules,
-        ];
+    } else {
+        $transaction_rules['Transactions'] = ['required', 'array'];
+        $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'];
+        $transaction_rules['Transactions.*.WagerID'] = ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'];
+        $transaction_rules['Transactions.*.GameType'] = ['required', 'string'];
+        $transaction_rules['Transactions.*.ProductID'] = ['required', 'string'];
+        $transaction_rules['Transactions.*.MemberName'] = ['required', 'string'];
     }
+
+    return [
+        'MemberName' => ['required', 'string'],
+        'OperatorCode' => ['required', 'string'],
+        'ProductID' => ['required', 'string'],
+        'MessageID' => ['required', 'string'],
+        'RequestTime' => ['required', 'string'],
+        'Sign' => ['required', 'string'],
+        ...$transaction_rules,
+    ];
+}
 
     public function check()
     {
