@@ -61,18 +61,18 @@ class WebhookRequest extends FormRequest
         $transaction_rules['Transactions'] = ['required', 'array'];
         $transaction_rules['Transactions'] = ['required', 'array'];
         $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'];
-        $transaction_rules['Transactions.*.GameType'] = ['required', 'string'];
-        $transaction_rules['Transactions.*.ProductID'] = ['required', 'string'];
+        $transaction_rules['Transactions.*.GameType'] = ['required'];
+        $transaction_rules['Transactions.*.ProductID'] = ['required'];
         $transaction_rules['Transactions.*.MemberName'] = ['required', 'string'];
     }
 
     return [
-        'MemberName' => ['required', 'string'],
-        'OperatorCode' => ['required', 'string'],
-        'ProductID' => ['required', 'string'],
-        'MessageID' => ['required', 'string'],
-        'RequestTime' => ['required', 'string'],
-        'Sign' => ['required', 'string'],
+        'MemberName' => ['required'],
+        'OperatorCode' => ['required'],
+        'ProductID' => ['required'],
+        'MessageID' => ['required'],
+        'RequestTime' => ['required'],
+        'Sign' => ['required'],
         ...$transaction_rules,
     ];
 }
