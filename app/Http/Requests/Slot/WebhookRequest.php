@@ -59,8 +59,8 @@ class WebhookRequest extends FormRequest
         }
     } else {
         $transaction_rules['Transactions'] = ['required', 'array'];
+        $transaction_rules['Transactions'] = ['required', 'array'];
         $transaction_rules['Transactions.*.TransactionID'] = ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'];
-        $transaction_rules['Transactions.*.WagerID'] = ['required', 'string', 'regex:/^[a-zA-Z0-9_-]+$/'];
         $transaction_rules['Transactions.*.GameType'] = ['required', 'string'];
         $transaction_rules['Transactions.*.ProductID'] = ['required', 'string'];
         $transaction_rules['Transactions.*.MemberName'] = ['required', 'string'];
