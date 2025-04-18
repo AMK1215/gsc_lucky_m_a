@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
 use App\Http\Controllers\Api\V1\Game\GameController;
 use App\Http\Controllers\Api\V1\Game\LaunchGameController;
 use App\Http\Controllers\Api\V1\NewVersion\PlaceBetNewVersionController;
-use App\Http\Controllers\Api\V1\NewVersion\Gsc\PlaceBetController;
+use App\Http\Controllers\Api\V1\Webhook\Gsc\PlaceBetController;
 use App\Http\Controllers\Api\V1\Player\DepositRequestController;
 use App\Http\Controllers\Api\V1\Player\PaymentTypeController;
 use App\Http\Controllers\Api\V1\Player\PlayerTransactionLogController;
