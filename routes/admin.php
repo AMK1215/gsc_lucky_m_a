@@ -26,6 +26,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Report\TestReportController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DailySummaryController;
+
 
 Route::group([
     'prefix' => 'admin', 'as' => 'admin.',
@@ -148,4 +150,14 @@ Route::group([
     Route::get('get-bet-detail/{wagerId}', [GetBetDetailController::class, 'getBetDetail'])->name('getBetDetail.show');
 
     Route::resource('/product_code', App\Http\Controllers\Admin\ProductCodeController::class);
+
+    Route::post('/generate-daily-summaries', [DailySummaryController::class, 'generateSummaries'])->name('generate_daily_sammary');
+
+     Route::get('/daily-summaries', [DailySummaryController::class, 'index'])
+    ->name('daily_summaries.index');
+
+    Route::get('/seamless-transactions', [DailySummaryController::class, 'SeamlessTransactionIndex'])
+        ->name('seamless_transactions.index');
+    Route::post('/seamless-transactions/delete', [DailySummaryController::class, 'deleteByDateRange'])
+        ->name('seamless_transactions.delete');
 });

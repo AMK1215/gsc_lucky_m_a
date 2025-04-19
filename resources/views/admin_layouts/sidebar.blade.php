@@ -5,7 +5,7 @@
         <li class="nav-item active">
             <a class="nav-link text-white " href="{{ route('home') }}" style="font-szie:large;">
                 <span class="sidenav-mini-icon"> <i class="material-icons-round opacity-10">dashboard</i> </span>
-                @if(Auth::user()->hasRole('Admin'))
+                @if (Auth::user()->hasRole('Admin'))
                     <span class="sidenav-normal ms-2 ps-1">Admin Dashboard</span>
                 @elseif(Auth::user()->hasRole('Agent'))
                     <span class="sidenav-normal ms-2 ps-1">Agent Dashboard</span>
@@ -15,36 +15,49 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-white " href="{{ route('admin.profile.index')}}">
+            <a class="nav-link text-white " href="{{ route('admin.profile.index') }}">
                 <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
                 <span class="sidenav-normal  ms-2  ps-1"> Profile </span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-white " href="{{ route('admin.report.index')}}">
+            <a class="nav-link text-white " href="{{ route('admin.report.index') }}">
                 <span class="sidenav-mini-icon"> <i class="fa-solid fa-chart-column"></i> </span>
                 <span class="sidenav-normal  ms-2  ps-1"> Win/lose Report </span>
             </a>
         </li>
         @can('admin_access')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ route('admin.agent.index')}}">
+                <a class="nav-link text-white " href="{{ route('admin.agent.index') }}">
                     <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">Agent List</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-white " href="{{ route('admin.daily_summaries.index') }}">
+                    <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
+                    <span class="sidenav-normal  ms-2  ps-1">DailyTotalReport</span>
                 </a>
             </li>
         @endcan
         @can('player_index')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ route('admin.player.index')}}">
+                <a class="nav-link text-white " href="{{ route('admin.player.index') }}">
                     <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">Player List</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white " href="{{ route('admin.daily_summaries.index') }}">
+                    <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
+                    <span class="sidenav-normal  ms-2  ps-1">DailyTotalReport</span>
                 </a>
             </li>
         @endcan
         @can('admin_access')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ url('admin/agent-win-lose-report')}}">
+                <a class="nav-link text-white " href="{{ url('admin/agent-win-lose-report') }}">
                     <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">AgentWinLose</span>
                 </a>
@@ -53,7 +66,7 @@
 
         @can('deposit')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ url('admin/auth-agent-win-lose-report')}}">
+                <a class="nav-link text-white " href="{{ url('admin/auth-agent-win-lose-report') }}">
                     <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">AgentWinLose</span>
                 </a>
@@ -62,21 +75,21 @@
 
         @can('admin_access')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ url('admin/players-list')}}">
+                <a class="nav-link text-white " href="{{ url('admin/players-list') }}">
                     <span class="sidenav-mini-icon"> <i class="fa-solid fa-user"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">Player List</span>
                 </a>
             </li>
         @endcan
         <li class="nav-item">
-            <a class="nav-link text-white " href="{{ route('admin.transferLog')}}">
+            <a class="nav-link text-white " href="{{ route('admin.transferLog') }}">
                 <span class="sidenav-mini-icon"> <i class="fas fa-right-left"></i> </span>
                 <span class="sidenav-normal  ms-2  ps-1">Transfer Log</span>
             </a>
         </li>
         @can('deposit')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ route('admin.agent.deposit')}}">
+                <a class="nav-link text-white " href="{{ route('admin.agent.deposit') }}">
                     <span class="sidenav-mini-icon"> <i class="fas fa-right-left"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">Deposit Request</span>
                 </a>
@@ -84,7 +97,7 @@
         @endcan
         @can('withdraw')
             <li class="nav-item">
-                <a class="nav-link text-white " href="{{ route('admin.agent.withdraw')}}">
+                <a class="nav-link text-white " href="{{ route('admin.agent.withdraw') }}">
                     <span class="sidenav-mini-icon"> <i class="fas fa-right-left"></i> </span>
                     <span class="sidenav-normal  ms-2  ps-1">WithDraw Request</span>
                 </a>
@@ -93,13 +106,14 @@
 
         <hr class="horizontal light mt-0">
         @can('admin_access')
-        <li class="nav-item">
-            <a data-bs-toggle="collapse" href="#dashboardsExamples" class="nav-link text-white " aria-controls="dashboardsExamples" role="button" aria-expanded="false">
-                <i class="material-icons py-2">settings</i>
-                <span class="nav-link-text ms-2 ps-1">General Setup</span>
-            </a>
-            <div class="collapse " id="dashboardsExamples">
-                <ul class="nav ">
+            <li class="nav-item">
+                <a data-bs-toggle="collapse" href="#dashboardsExamples" class="nav-link text-white "
+                    aria-controls="dashboardsExamples" role="button" aria-expanded="false">
+                    <i class="material-icons py-2">settings</i>
+                    <span class="nav-link-text ms-2 ps-1">General Setup</span>
+                </a>
+                <div class="collapse " id="dashboardsExamples">
+                    <ul class="nav ">
                         <li class="nav-item ">
                             <a class="nav-link text-white " href="{{ route('admin.banners.index') }}">
                                 <span class="sidenav-mini-icon"> <i class="fa-solid fa-panorama"></i> </span>
@@ -138,13 +152,15 @@
                             </a>
                         </li>
 
-                </ul>
-            </div>
-        </li>
+                    </ul>
+                </div>
+            </li>
         @endcan
         <li class="nav-item">
-            <a href="{{ route('logout') }}" onclick="event.preventDefault();
-      document.getElementById('logout-form').submit();" class="nav-link text-white">
+            <a href="{{ route('logout') }}"
+                onclick="event.preventDefault();
+      document.getElementById('logout-form').submit();"
+                class="nav-link text-white">
                 <span class="sidenav-mini-icon"> <i class="fas fa-right-from-bracket text-white"></i> </span>
                 <span class="sidenav-normal ms-2 ps-1">Logout</span>
             </a>
