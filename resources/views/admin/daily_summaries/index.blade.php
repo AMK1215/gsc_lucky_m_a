@@ -47,10 +47,11 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card" style="border-radius: 20px;">
-                        <div class="card-header">
-                            <h3>Total Daily Slot Win/Lose Report</h3>
-                        </div>
+                        {{-- <div class="card-header">
+                            <h5>Total Daily Slot Win/Lose Report</h5>
+                        </div> --}}
                         <div class="card-body">
+                            <h5>Total Daily Slot Win/Lose Report</h5>
                             <!-- Date Filter Form -->
                             {{-- <form method="GET" action="{{ route('admin.daily_summaries.index') }}" class="date-filter-form">
                             <div class="form-group">
@@ -85,7 +86,7 @@
                             <div id="generationResult" class="mt-3"></div>
 
                             <table id="ponewineTable" class="table table-bordered table-hover">
-                                <thead>
+                                <thead class="text-center text-bold text-dark table-info">
                                     <tr>
                                         <th>Date</th>
                                         <th>Member Name</th>
@@ -99,10 +100,10 @@
                                         <th>Created At</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody >
                                     @forelse ($summaries as $summary)
-                                        <tr>
-                                            <td>{{ $summary->report_date_formatted }}</td>
+                                        <tr class="text-center text-dark" style="font-size: 14px !important;">
+                                            {{-- <td>{{ $summary->report_date_formatted }}</td>
                                             <td>{{ $summary->member_name ?? 'N/A' }}</td>
                                             <td>{{ $summary->agent_id ?? 'N/A' }}</td>
                                             <td>{{ number_format($summary->total_valid_bet_amount ?? 0) }}</td>
@@ -111,12 +112,9 @@
                                             <td>{{ number_format($summary->total_win_amount) }}</td>
                                             <td>{{ number_format($summary->total_lose_amount) }}</td>
                                             <td>{{ $summary->total_stake_count }}</td>
-                                            <td>{{ $summary->created_at_formatted }}</td>
+                                            <td>{{ $summary->created_at_formatted }}</td> --}}
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="10">No summaries found</td>
-                                        </tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -124,6 +122,13 @@
                             <div class="pagination">
                                 {{ $summaries->links() }}
                             </div>
+
+                            @if ($summaries->isEmpty())
+<div class="text-center text-danger mt-3" style="font-weight: bold;">
+    🔍 No summaries found
+</div>
+@endif
+
                         </div>
                     </div>
                 </div>
