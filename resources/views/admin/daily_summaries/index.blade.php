@@ -65,7 +65,7 @@
                             <button type="submit" class="btn btn-primary">Filter</button>
                             <a href="{{ route('admin.daily_summaries.index') }}" class="btn btn-secondary">Clear</a>
                         </form> --}}
-                            @can('senior_owner_access')
+                            @can('admin_access')
                                 <form method="POST" action="{{ route('admin.generate_daily_sammary') }}"
                                     class="date-filter-form">
                                     @csrf
@@ -100,7 +100,7 @@
                                         <th>Created At</th>
                                     </tr>
                                 </thead>
-                                <tbody >
+                                <tbody>
                                     @forelse ($summaries as $summary)
                                         <tr class="text-center text-dark" style="font-size: 14px !important;">
                                             {{-- <td>{{ $summary->report_date_formatted }}</td>
@@ -124,10 +124,10 @@
                             </div>
 
                             @if ($summaries->isEmpty())
-<div class="text-center text-danger mt-3" style="font-weight: bold;">
-    🔍 No summaries found
-</div>
-@endif
+                                <div class="text-center text-danger mt-3" style="font-weight: bold;">
+                                    🔍 No summaries found
+                                </div>
+                            @endif
 
                         </div>
                     </div>
