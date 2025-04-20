@@ -17,7 +17,7 @@ use Bavix\Wallet\Models\Wallet;
 
 class DailySummaryController extends Controller
 {
-    protected const SUB_AGENT_ROlE = 'Sub Agent';
+    protected const SUB_AGENT_ROlE = 'Agent';
     protected const MAX_REPORTS_PER_DAY = 10000; // Maximum allowed reports per day
 
     public function index(Request $request)
@@ -37,15 +37,15 @@ class DailySummaryController extends Controller
     // ]);
 
     $hierarchy = [
-        'Owner' => ['Senior', 'Master', 'Agent'],
-        'Senior' => ['Master', 'Agent'],
-        'Master' => ['Agent'],
+        'Admin' => ['Agent'],
+        'Agent' => ['Agent'],
+
     ];
 
     $query = DailySummary::query()
             ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
             ->select('daily_summaries.*');
-        
+
     // Log the initial query state
     // Log::debug('Initial query built', [
     //     'sql' => $query->toSql(),
@@ -70,7 +70,7 @@ class DailySummaryController extends Controller
     //     'bindings' => $query->getBindings(),
     // ]);
 
-    if ($agent->hasRole('Senior Owner')) {
+    if ($agent->hasRole('Admin')) {
         $result = $query;
         Log::debug('Agent has Senior Owner role, no additional filtering applied');
     } elseif ($agent->hasRole('Agent')) {
@@ -130,7 +130,7 @@ class DailySummaryController extends Controller
     //     $query = DailySummary::query()
     //             ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
     //             ->select('daily_summaries.*');
-            
+
     //     // Apply date filters if provided
     //     if ($request->filled('start_date')) {
     //         $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));
@@ -670,7 +670,7 @@ class DailySummaryController extends Controller
 //         $query = DailySummary::query()
 //                 ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
 //                 ->select('daily_summaries.*');
-            
+
 //         // Apply date filters if provided
 //         if ($request->filled('start_date')) {
 //             $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));
@@ -937,7 +937,7 @@ class DailySummaryController extends Controller
 //         $query = DailySummary::query()
 //                 ->join('users', 'users.user_name', '=', 'daily_summaries.member_name')
 //                 ->select('daily_summaries.*');
-            
+
 //         // Apply date filters if provided
 //         if ($request->filled('start_date')) {
 //             $query->whereDate('report_date', '>=', Carbon::parse($request->start_date));
