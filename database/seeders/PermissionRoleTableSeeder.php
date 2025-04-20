@@ -27,6 +27,8 @@ class PermissionRoleTableSeeder extends Seeder
             'transfer_log',
             'make_transfer',
             'game_type_access',
+            'superadmin_access',
+            'superadmin_index',
         ]);
         Role::findOrFail(1)->permissions()->sync($admin_permissions->pluck('id'));
         // Admin permissions
@@ -56,6 +58,7 @@ class PermissionRoleTableSeeder extends Seeder
         $superadmin_permissions = Permission::whereIn('title', [
             'superadmin_access',
             'superadmin_index',
+            'admin_access',
         ]);
         Role::findOrFail(4)->permissions()->sync($superadmin_permissions->pluck('id'));
     }
