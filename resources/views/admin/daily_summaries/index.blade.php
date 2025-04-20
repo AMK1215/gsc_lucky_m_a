@@ -51,7 +51,7 @@
                             <h5>Total Daily Slot Win/Lose Report</h5>
                         </div> --}}
                         <div class="card-body">
-                            <h5>Total Daily Slot Win/Lose Report</h5>
+                            <h5 class="mb-4">Total Daily Slot Win/Lose Report</h5>
                             <!-- Date Filter Form -->
                             {{-- <form method="GET" action="{{ route('admin.daily_summaries.index') }}" class="date-filter-form">
                             <div class="form-group">
@@ -69,15 +69,21 @@
                                 <form method="POST" action="{{ route('admin.generate_daily_sammary') }}"
                                     class="date-filter-form">
                                     @csrf
-                                    <div class="form-group">
-                                        <label for="start_date">Start Date</label>
-                                        <input type="date" name="start_date" id="start_date" class="form-control" required>
+                                  <div class="row mb-4">
+                                    <div class="form-group col-3">
+                                        <label for="start_date" class="text-dark">Start Date</label>
+                                        <input type="date" name="start_date" id="start_date" class="form-control border border-dark p-1" required>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="end_date">End Date</label>
-                                        <input type="date" name="end_date" id="end_date" class="form-control" required>
+                                    <div class="form-group col-3">
+                                        <label for="end_date" class="text-dark">End Date</label>
+                                        <input type="date" name="end_date" id="end_date" class="form-control border border-dark p-1" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Generate Summaries</button>
+                                    <div class="form-group col-3">
+
+                                        <button type="submit"  class="btn btn-primary"  style="height:35px !important;margin-top:30px;">Generate Summaries</button>
+                                    </div>
+
+                                  </div>
                                 </form>
                             @endcan
 
