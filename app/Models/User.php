@@ -3,17 +3,20 @@
 namespace App\Models;
 
 use App\Enums\UserType;
-use App\Events\UserCreatedEvent;
 use App\Models\Admin\Bank;
+use App\Models\Admin\Banner;
+use App\Models\Admin\BannerAds;
+use App\Models\Admin\BannerText;
 use App\Models\Admin\Permission;
+use App\Models\Admin\Promotion;
 use App\Models\Admin\Role;
-use App\Models\Report;
-use App\Models\SeamlessTransaction;
+use App\Models\Admin\TopTenWithdraw;
+use App\Models\Webhook\Bet;
+use App\Models\Webhook\BetNResult;
+use App\Models\Webhook\Result;
 use Bavix\Wallet\Interfaces\Wallet;
 use Bavix\Wallet\Traits\HasWalletFloat;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -48,16 +51,13 @@ class User extends Authenticatable implements Wallet
         'is_changed_password',
         'referral_code',
         'agent_logo',
-        'payment_type_id',
-        'account_number',
-        'account_name',
-        'line_id',
-        'commission',
+        'site_name',
+        'site_link',
     ];
 
-    protected $dispatchesEvents = [
-        'created' => UserCreatedEvent::class,
-    ];
+    // protected $dispatchesEvents = [
+    //     'created' => UserCreatedEvent::class,
+    // ];
 
     protected $dates = ['created_at', 'updated_at'];
 
@@ -84,13 +84,13 @@ class User extends Authenticatable implements Wallet
 
     public function getIsAdminAttribute()
     {
-        return $this->roles()->where('id', 2)->exists();
+        return $this->roles()->where('id', 1)->exists();
     }
 
-    // public function getIsMasterAttribute()
-    // {
-    //     return $this->roles()->where('id', 2)->exists();
-    // }
+    public function getIsMasterAttribute()
+    {
+        return $this->roles()->where('id', 2)->exists();
+    }
 
     public function getIsAgentAttribute()
     {
@@ -144,21 +144,6 @@ class User extends Authenticatable implements Wallet
         return self::where('type', UserType::SuperAdmin)->first();
     }
 
-    public function seamlessTransactions()
-    {
-        return $this->hasMany(SeamlessTransaction::class, 'user_id');
-    }
-
-    public function wagers()
-    {
-        return $this->hasMany(Wager::class);
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo(User::class, 'agent_id');
-    }
-
     public function scopeRoleLimited($query)
     {
         if (! Auth::user()->hasRole('Admin')) {
@@ -189,13 +174,85 @@ class User extends Authenticatable implements Wallet
         return $this->belongsTo(User::class, 'agent_id');
     }
 
-    public function paymentType()
+    public function banks(): HasMany
     {
-        return $this->belongsTo(PaymentType::class, 'payment_type_id');
+        return $this->hasMany(Bank::class, 'agent_id');
     }
 
-    public function reports()
+    public function transactions(): MorphMany
     {
-        return $this->hasMany(Report::class, 'agent_id');
+        return $this->morphMany(Transaction::class, 'payable');
+    }
+
+    // Fetch players managed by an agent
+    public function players()
+    {
+        return $this->hasMany(User::class, 'agent_id');
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'agent_id');
+    }
+
+    // A user can have a parent (e.g., Agent belongs to an Admin)
+    public function parent()
+    {
+        return $this->belongsTo(User::class, 'agent_id');
+    }
+
+    // A user can have children (e.g., Admin has many Agents, or Agent has many Players)
+    public function children()
+    {
+        return $this->hasMany(User::class, 'agent_id');
+    }
+
+    // Get all players under an agent
+    public function Agentplayers()
+    {
+        return $this->children()->whereHas('roles', function ($query) {
+            $query->where('role_id', self::PLAYER_ROLE);
+        });
+    }
+
+    public function banners()
+    {
+        return $this->hasMany(Banner::class, 'admin_id'); // Banners owned by this admin
+    }
+
+    public function bannertexts()
+    {
+        return $this->hasMany(BannerText::class, 'admin_id'); // Banners owned by this admin
+    }
+
+    public function bannerads()
+    {
+        return $this->hasMany(BannerAds::class, 'admin_id'); // Banners owned by this admin
+    }
+
+    public function promotions()
+    {
+        return $this->hasMany(Promotion::class, 'admin_id'); // Banners owned by this admin
+    }
+
+    /**
+     * Recursive relationship to get all ancestors up to senior.
+     */
+    public function ancestors()
+    {
+        return $this->parent()->with('ancestors');
+    }
+
+    /**
+     * Recursive relationship to get all descendants down to players.
+     */
+    public function descendants()
+    {
+        return $this->children()->with('descendants');
+    }
+
+    public function agents()
+    {
+        return $this->hasMany(User::class, 'agent_id');
     }
 }

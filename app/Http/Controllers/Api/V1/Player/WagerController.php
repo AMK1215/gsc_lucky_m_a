@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Player;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SeamlessTransactionResource;
@@ -25,29 +25,23 @@ class WagerController extends Controller
         };
 
         $user = auth()->user();
-
-        $transactions = $this->makeJoinTable()->select(
-            'products.name as product_name',
-            DB::raw('MIN(reports.settlement_date) as from_date'),
-            DB::raw('MAX(reports.settlement_date) as to_date'),
-            DB::raw('COUNT(product_code) as total_count'),
-            DB::raw('SUM(reports.bet_amount) as total_bet_amount'),
-            DB::raw('SUM(reports.payout_amount) as total_payout_amount'))
-            ->groupBy('product_name')
-            ->where('member_name', $user->user_name)
-            ->whereBetween('reports.settlement_date', [$from, $to])
-            ->paginate();
+        
+        $transactions = DB::table('reports')
+            ->select(
+                DB::raw('MIN(reports.updated_at) as from_date'),
+                DB::raw('MAX(reports.updated_at) as to_date'),
+                DB::raw('COUNT(reports.product_code) as total_count'),
+                DB::raw('SUM(reports.bet_amount) as total_bet_amount'),
+                DB::raw('SUM(reports.payout_amount) as total_payout_amount'),
+                'products.name as provider_name',
+                'products.code as code'
+            )
+            ->join('products', 'products.code', '=' , 'reports.product_code')
+            ->where('reports.member_name', $user->user_name)
+            ->whereBetween('reports.updated_at', [$from, $to])
+            ->groupBy('products.code', 'products.name')
+            ->get();
 
         return $this->success(SeamlessTransactionResource::collection($transactions));
-    }
-
-    private function makeJoinTable()
-    {
-        $query = User::query();
-        $query->join('reports', 'reports.member_name', '=', 'users.user_name')
-            ->join('products', 'reports.product_code', '=', 'products.code')
-            ->where('reports.status', '101');
-
-        return $query;
     }
 }

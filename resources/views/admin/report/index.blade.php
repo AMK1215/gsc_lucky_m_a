@@ -1,118 +1,96 @@
 @extends('admin_layouts.app')
-@section('content')
-    <section class="content-header">
-        <div class="container-fluid">
-            <div class="row mb-2">
-                <div class="col-12">
-                    <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                        <li class="breadcrumb-item active">GSC Win/Lose</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="d-flex justify-content-end mb-3">
-                        {{-- <a href="{{ route('admin.banners.create') }}" class="btn bg-gradient-success btn-sm mb-0">+&nbsp;
-                            New Banner</a> --}}
-                    </div>
-                    <div class="card " style="border-radius: 20px;">
-
-                        <div class="card-body">
-                        <table class="table table-flush" id="users-search">
-
-                                <thead>
-                                    <tr>
-                                        <th>Product Name</th>
-                                        <th>Total Record</th>
-                                        <th>Total Bet</th>
-                                        <th>Total Valid Bet</th>
-                                        <th>Total Progressive JP</th>
-                                        <th>Total Payout</th>
-                                        <th>Total Win/Loss</th>
-                                        {{-- <th>Member Commission</th> --}}
-                                        <th>Upline Commission</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($data as $report)
-                                        <tr>
-                                            <td>
-                                                <a href="{{ route('admin.Reportproduct.details', $report->product_name) }}"
-                                                    style="color: blue;">
-                                                    {{ $report->product_name }}
-                                                </a>
-                                            </td>
-
-                                            <td>{{ $report->total_record }}</td>
-                                            <td>{{ $report->total_bet }}</td>
-                                            <td>{{ $report->total_valid_bet }}</td>
-                                            <td>{{ $report->total_prog_jp }}</td>
-                                            <td>{{ $report->total_payout }}</td>
-                                            {{-- <td>{{ $report->total_win_lose }}</td> --}}
-                                            <td>
-                                                @if ($report->total_win_lose < 0)
-                                                    <span style="color: red;">-{{ abs($report->total_win_lose) }}</span>
-                                                @else
-                                                    <span style="color: green;">+{{ $report->total_win_lose }}</span>
-                                                @endif
-                                            </td>
-                                            {{-- <td>{{ $report->member_comm }}</td> --}}
-                                            <td>{{ $report->upline_comm }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- /.card-body -->
-                    </div>
-                    <!-- /.card -->
-                </div>
-            </div>
-        </div>
-    </section>
+@section('styles')
+<style>
+    .transparent-btn {
+        background: none;
+        border: none;
+        padding: 0;
+        outline: none;
+        cursor: pointer;
+        box-shadow: none;
+        appearance: none;
+        /* For some browsers */
+    }
+</style>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
 @endsection
+@section('content')
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header pb-0">
+                <div class="d-lg-flex">
+                    <div>
+                        <h5 class="mb-0">Winlose Reports</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-flush" id="banners-search">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>AgentName</th>
+                            <th>UserName</th>
+                            <th>TotalStake</th>
+                            <th>TotalBet</th>
+                            <th>TotalWin</th>
+                            <th>TotalNetWin</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($report as $row)
+                        <tr>
+                            <td>{{ $row->user_name }}</td>
+                            <td>{{ $row->user_name }}</td>
+                            <td>{{ $row->total_count }}</td>
+                            <td class="">
+                                {{ number_format($row->total_bet_amount, 2) }}
+                            </td>
+                            <td class="">
+                                {{ number_format($row->total_payout_amount, 2) }}
+                            </td>
+                            <?php
+                            $net_win = $row->total_payout_amount - $row->total_bet_amount;
+                            ?>
+                            <td class="{{ $net_win >= 0 ? 'text-success' : 'text-danger' }}">
 
+                                {{ number_format($net_win, 2) }}
+                            </td>
+                            <td><a href="{{ route('admin.reports.details', $row->user_name) }}">Detail</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                    <tfoot>
+                        <th></th>
+                        <th>Total Stake</th>
+                        <th>{{$total['totalstake']}}</th>
+                        <th>Total Bet Amt</th>
+                        <th>{{$total['totalBetAmt']}}</th>
+                        <th>Total Win Amt</th>
+                        <th>{{$total['totalWinAmt']}}</th>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
 @section('scripts')
-<script src="{{ asset('admin_app/assets/js/plugins/datatables.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
+<script src="{{ asset('admin_app/assets/js/plugins/datatables.js') }}"></script>
 <script>
-  if (document.getElementById('users-search')) {
-    const dataTableSearch = new simpleDatatables.DataTable("#users-search", {
-      searchable: false,
-      fixedHeight: false,
-      perPage: 7
-    });
-
-    document.querySelectorAll(".export").forEach(function(el) {
-      el.addEventListener("click", function(e) {
-        var type = el.dataset.type;
-
-        var data = {
-          type: type,
-          filename: "material-" + type,
-        };
-
-        if (type === "csv") {
-          data.columnDelimiter = "|";
-        }
-
-        dataTableSearch.export(data);
-      });
-    });
-  };
-</script>
-<script>
-  var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-  var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-    return new bootstrap.Tooltip(tooltipTriggerEl)
-  })
+    if (document.getElementById('banners-search')) {
+        const dataTableSearch = new simpleDatatables.DataTable("#banners-search", {
+            searchable: true,
+            fixedHeight: false,
+            perPage: 7
+        });
+    };
 </script>
 @endsection
