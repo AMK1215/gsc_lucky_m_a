@@ -1,32 +1,33 @@
 <?php
 
-use App\Http\Controllers\Admin\Agent\AgentController;
-use App\Http\Controllers\Admin\BannerAds\BannerAdsController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\RolesController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\GameListController;
+use App\Http\Controllers\Admin\SiteLogoController;
+use App\Http\Controllers\Admin\GSCReportController;
+use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\BannerTextController;
 use App\Http\Controllers\Admin\Bonu\BonusController;
-use App\Http\Controllers\Admin\Deposit\DepositRequestController;
-use App\Http\Controllers\Admin\GameListController;
-use App\Http\Controllers\Admin\GameTypeProductController;
-use App\Http\Controllers\Admin\GetBetDetailController;
-use App\Http\Controllers\Admin\GSCReportController;
-use App\Http\Controllers\Admin\LoginController;
-use App\Http\Controllers\Admin\Master\MasterController;
-use App\Http\Controllers\Admin\PaymentController;
-use App\Http\Controllers\Admin\PaymentTypeController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\Agent\AgentController;
+use App\Http\Controllers\Admin\PaymentTypeController;
+use App\Http\Controllers\Report\TestReportController;
+use App\Http\Controllers\Admin\DailySummaryController;
+use App\Http\Controllers\Admin\GetBetDetailController;
+use App\Http\Controllers\Admin\Master\MasterController;
 use App\Http\Controllers\Admin\Player\PlayerController;
-use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\PromotionController;
-use App\Http\Controllers\Admin\RolesController;
-use App\Http\Controllers\Admin\SiteLogoController;
+use App\Http\Controllers\Admin\GameTypeProductController;
+use App\Http\Controllers\Admin\BannerAds\BannerAdsController;
+use App\Http\Controllers\Admin\Deposit\DepositRequestController;
 use App\Http\Controllers\Admin\TransferLog\TransferLogController;
 use App\Http\Controllers\Admin\WithDraw\WithDrawRequestController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Report\TestReportController;
-use App\Http\Controllers\ReportController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DailySummaryController;
 
 
 Route::group([
@@ -72,6 +73,8 @@ Route::group([
     Route::resource('text', BannerTextController::class);
     Route::resource('/promotions', PromotionController::class);
     Route::resource('paymentTypes', PaymentTypeController::class);
+    Route::resource('contact', ContactController::class);
+
     Route::get('gametypes', [GameTypeProductController::class, 'index'])->name('gametypes.index');
     Route::get('gametypes/{game_type_id}/product/{product_id}', [GameTypeProductController::class, 'edit'])->name('gametypes.edit');
     Route::post('gametypes/{game_type_id}/product/{product_id}', [GameTypeProductController::class, 'update'])->name('gametypes.update');

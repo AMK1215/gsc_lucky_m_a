@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\V1\AgentLogoController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Bank\BankController;
 use App\Http\Controllers\Api\V1\BannerController;
+use App\Http\Controllers\Api\V1\ContactController;
 use App\Http\Controllers\Api\V1\Game\DirectLaunchGameController;
 use App\Http\Controllers\Api\V1\Game\GameController;
 use App\Http\Controllers\Api\V1\Game\LaunchGameController;
@@ -50,6 +51,7 @@ Route::get('promotion', [PromotionController::class, 'index']);
 Route::get('banner', [BannerController::class, 'index']);
 Route::get('bannerText', [BannerController::class, 'bannerText']);
 Route::get('popup-ads-banner', [BannerController::class, 'AdsBannerIndex']);
+Route::get('contact', [ContactController::class, 'get']);
 
 Route::get('v1/validate', [AuthController::class, 'callback']);
 Route::get('gameTypeProducts/{id}', [GameController::class, 'gameTypeProducts']);

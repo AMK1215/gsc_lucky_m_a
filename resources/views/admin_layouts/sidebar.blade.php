@@ -132,7 +132,12 @@
                                 <span class="sidenav-normal  ms-2  ps-1"> Banner Text </span>
                             </a>
                         </li>
-
+                        <li class="nav-item ">
+                            <a class="nav-link text-white " href="{{ route('admin.contact.index') }}">
+                                <span class="sidenav-mini-icon"> <i class="fa-solid fa-panorama"></i> </span>
+                                <span class="sidenav-normal  ms-2  ps-1"> Contact </span>
+                            </a>
+                        </li>
                         <li class="nav-item ">
                             <a class="nav-link text-white " href="{{ route('admin.promotions.index') }}">
                                 <span class="sidenav-mini-icon"> <i class="fas fa-gift"></i> </span>
