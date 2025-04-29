@@ -1,96 +1,96 @@
 @extends('admin_layouts.app')
 @section('styles')
-<style>
-    .transparent-btn {
-        background: none;
-        border: none;
-        padding: 0;
-        outline: none;
-        cursor: pointer;
-        box-shadow: none;
-        appearance: none;
-        /* For some browsers */
-    }
-</style>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <style>
+        .transparent-btn {
+            background: none;
+            border: none;
+            padding: 0;
+            outline: none;
+            cursor: pointer;
+            box-shadow: none;
+            appearance: none;
+            /* For some browsers */
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
 @endsection
 @section('content')
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <!-- Card header -->
-            <div class="card-header pb-0">
-                <div class="d-lg-flex">
-                    <div>
-                        <h5 class="mb-0">Winlose Reports</h5>
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <!-- Card header -->
+                <div class="card-header pb-0">
+                    <div class="d-lg-flex">
+                        <div>
+                            <h5 class="mb-0">Winlose Reports</h5>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-flush" id="banners-search">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>AgentName</th>
-                            <th>UserName</th>
-                            <th>TotalStake</th>
-                            <th>TotalBet</th>
-                            <th>TotalWin</th>
-                            <th>TotalNetWin</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($report as $row)
-                        <tr>
-                            <td>{{ $row->user_name }}</td>
-                            <td>{{ $row->user_name }}</td>
-                            <td>{{ $row->total_count }}</td>
-                            <td class="">
-                                {{ number_format($row->total_bet_amount, 2) }}
-                            </td>
-                            <td class="">
-                                {{ number_format($row->total_payout_amount, 2) }}
-                            </td>
-                            <?php
-                            $net_win = $row->total_payout_amount - $row->total_bet_amount;
-                            ?>
-                            <td class="{{ $net_win >= 0 ? 'text-success' : 'text-danger' }}">
+                <div class="table-responsive">
+                    <table class="table table-flush" id="banners-search">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>AgentName</th>
+                                <th>UserName</th>
+                                <th>TotalStake</th>
+                                <th>TotalBet</th>
+                                <th>TotalWin</th>
+                                <th>TotalNetWin</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($report as $row)
+                                <tr>
+                                    <td>{{ $row->user_name }}</td>
+                                    <td>{{ $row->user_name }}</td>
+                                    <td>{{ $row->total_count }}</td>
+                                    <td class="">
+                                        {{ number_format($row->total_bet_amount, 2) }}
+                                    </td>
+                                    <td class="">
+                                        {{ number_format($row->total_payout_amount, 2) }}
+                                    </td>
+                                    <?php
+                                    $net_win = $row->total_payout_amount - $row->total_bet_amount;
+                                    ?>
+                                    <td class="{{ $net_win >= 0 ? 'text-success' : 'text-danger' }}">
 
-                                {{ number_format($net_win, 2) }}
-                            </td>
-                            <td><a href="{{ route('admin.reports.details', $row->user_name) }}">Detail</a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <th></th>
-                        <th>Total Stake</th>
-                        <th>{{$total['totalstake']}}</th>
-                        <th>Total Bet Amt</th>
-                        <th>{{$total['totalBetAmt']}}</th>
-                        <th>Total Win Amt</th>
-                        <th>{{$total['totalWinAmt']}}</th>
+                                        {{ number_format($net_win, 2) }}
+                                    </td>
+                                    <td><a href="{{ route('admin.report.details', $row->user_name) }}">Detail</a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                        <tfoot>
+                            <th></th>
+                            <th>Total Stake</th>
+                            <th>{{ $total['totalstake'] }}</th>
+                            <th>Total Bet Amt</th>
+                            <th>{{ $total['totalBetAmt'] }}</th>
+                            <th>Total Win Amt</th>
+                            <th>{{ $total['totalWinAmt'] }}</th>
 
-                    </tfoot>
-                </table>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
-</div>
 @endsection
 @section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 
-<script src="{{ asset('admin_app/assets/js/plugins/datatables.js') }}"></script>
-<script>
-    if (document.getElementById('banners-search')) {
-        const dataTableSearch = new simpleDatatables.DataTable("#banners-search", {
-            searchable: true,
-            fixedHeight: false,
-            perPage: 7
-        });
-    };
-</script>
+    <script src="{{ asset('admin_app/assets/js/plugins/datatables.js') }}"></script>
+    <script>
+        if (document.getElementById('banners-search')) {
+            const dataTableSearch = new simpleDatatables.DataTable("#banners-search", {
+                searchable: true,
+                fixedHeight: false,
+                perPage: 7
+            });
+        };
+    </script>
 @endsection
