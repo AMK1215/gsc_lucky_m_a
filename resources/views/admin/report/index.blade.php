@@ -58,7 +58,7 @@
 
                                         {{ number_format($net_win, 2) }}
                                     </td>
-                                    <td><a href="{{ route('admin.report.details', $row->user_name) }}">Detail</a>
+                                    <td><a href="{{ route('admin.report.detail', $row->user_name) }}">Detail</a>
                                     </td>
                                 </tr>
                             @endforeach
