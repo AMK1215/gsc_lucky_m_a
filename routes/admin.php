@@ -135,10 +135,13 @@ Route::group([
     // Route::get('/win-lose/details/{product_name}', [GSCReportController::class, 'ReportDetails'])->name('Reportproduct.details');
 
     Route::group(['prefix' => 'report'], function () {
-        Route::get('index', [ReportController::class, 'index'])->name('report.index');
-        Route::get('view/{user_id}', [ReportController::class, 'view'])->name('report.view');
-        Route::get('show/{proudct_code}', [ReportController::class, 'show'])->name('report.show');
-        Route::get('detail/{user_id}', [ReportController::class, 'detail'])->name('report.detail');
+        Route::get('report', [ReportController::class, 'index'])->name('report.index');
+        Route::get('reports/details/{player_id}', [ReportController::class, 'getReportDetails'])->name('reports.details');
+        Route::get('reports/player/{player_id}', [ReportController::class, 'getPlayer'])->name('reports.player.index');
+        // Route::get('index', [ReportController::class, 'index'])->name('report.index');
+        // Route::get('view/{user_id}', [ReportController::class, 'view'])->name('report.view');
+        // Route::get('show/{proudct_code}', [ReportController::class, 'show'])->name('report.show');
+        // Route::get('detail/{user_id}', [ReportController::class, 'detail'])->name('report.detail');
     });
 
     Route::group(['prefix' => 'bonu'], function () {
