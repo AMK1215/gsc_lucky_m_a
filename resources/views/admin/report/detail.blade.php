@@ -32,7 +32,7 @@
                                 <div class="col-lg-3">
                                     <div class="mb-3">
                                         <label class="form-label text-dark fw-bold" for="inputEmail1">Product Type</label>
-                                        <select name="product_id" id="" class="form-control">
+                                        <select name="product_id" id="" class="form-control  border border-1 border-secondary px-2">
                                             <option value="">Select Product type</option>
                                             @foreach ($productTypes as $type)
                                                 <option value="{{ $type->id }}"
@@ -56,7 +56,7 @@
                                             id="" name="end_date" value="{{ request()->end_date }}">
                                     </div>
                                 </div>
-                                <div class="col-log-3">
+                                <div class="col-lg-3">
                                     <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Search</button>
                                     <a href="{{ route('admin.reports.details', $playerId) }}" class="btn btn-warning"
                                         style="margin-top: 32px;">Refresh</a>
@@ -65,7 +65,7 @@
                         </form>
                         <div class="card-body">
                             <table id="mytable" class="table table-bordered table-hover">
-                                <thead>
+                                <thead class="text-center">
                                     <tr>
                                         <th>Player Name</th>
                                         <th>ProviderName</th>
@@ -76,7 +76,7 @@
                                         <th>TransactionDateTime</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody class="text-center">
                                     @foreach ($details as $detail)
                                         <tr>
                                             <td>{{ $detail->member_name }}</td>
@@ -96,8 +96,6 @@
                                         </tr>
                                     @endforeach
                                 </tbody>
-
-
                             </table>
                         </div>
                         <!-- /.card-body -->
