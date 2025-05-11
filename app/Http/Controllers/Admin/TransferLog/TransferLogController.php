@@ -20,7 +20,9 @@ class TransferLogController extends Controller
         $transferLogs = Auth::user()->transactions()->with('targetUser')
             ->whereIn('transactions.type', ['withdraw', 'deposit'])
             ->whereIn('transactions.name', ['credit_transfer', 'debit_transfer'])
-            ->latest()->paginate();
+            ->latest()
+            ->paginate(20);
+
 
         return view('admin.trans_log.index', compact('transferLogs'));
     }

@@ -2,20 +2,45 @@
 
 namespace App\Http\Controllers\Admin\WithDraw;
 
-use App\Enums\TransactionName;
-use App\Http\Controllers\Controller;
+use Exception;
+use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Http\Request;
+use App\Enums\TransactionName;
 use App\Models\WithDrawRequest;
 use App\Services\WalletService;
-use Exception;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class WithDrawRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $withdraws = WithDrawRequest::with(['user'])->where('agent_id', Auth::id())->orderBy('id', 'desc')->paginate(7);
+
+        $startDate = $request->start_date
+        ? Carbon::parse($request->start_date)->startOfDay()->toDateTimeString()
+        : Carbon::today()->startOfDay()->toDateTimeString();
+
+        $endDate = $request->end_date
+        ? Carbon::parse($request->end_date)->endOfDay()->toDateTimeString()
+        : Carbon::today()->endOfDay()->toDateTimeString();
+
+        $query = WithDrawRequest::with(['user'])
+                                        ->where('agent_id', Auth::id());
+
+                                        if ($startDate && $endDate) {
+                                            $query->whereBetween('created_at', [$startDate, $endDate]);
+                                        } elseif ($startDate && !$endDate) {
+                                            $query->where('created_at', '>=', $startDate);
+                                        } elseif (!$startDate && $endDate) {
+                                            $query->where('created_at', '<=', $endDate);
+                                        }
+
+       $withdraws =  $query->orderBy('id', 'desc')
+                            ->paginate(15)
+                            ->appends($request->only(['start_date', 'end_date']));
+
+
 
         return view('admin.withdraw_request.index', compact('withdraws'));
     }

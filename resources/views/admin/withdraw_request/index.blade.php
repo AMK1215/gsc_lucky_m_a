@@ -29,14 +29,38 @@
             <div class="card-header pb-0">
                 <div class="d-lg-flex">
                     <div>
-                        <h5 class="mb-0">Withdraw Requested Lists</h5>
-
+                        <h5 class="mb-2">Withdraw Requested Lists</h5>
                     </div>
                 </div>
+                <form role="form" class="text-start mt-4"
+                action="{{route('admin.agent.deposit')}}" method="GET">
+                <div class="row ml-5">
+
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold" for="inputEmail1">From Date</label>
+                            <input type="date" class="form-control border border-1 border-secondary px-2"
+                                name="start_date" value="{{ request()->start_date }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="mb-3">
+                            <label class="form-label text-dark fw-bold" for="inputEmail1">To Date</label>
+                            <input type="date" class="form-control border border-1 border-secondary px-2"
+                                id="" name="end_date" value="{{ request()->end_date }}">
+                        </div>
+                    </div>
+                    <div class="col-lg-3">
+                        <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Search</button>
+                        <a href="{{route('admin.agent.withdraw')}}" class="btn btn-warning"
+                            style="margin-top: 32px;">Refresh</a>
+                    </div>
+                </div>
+            </form>
             </div>
             <div class="table-responsive">
-                <table class="table table-flush" id="users-search">
-                    <thead class="thead-light">
+                <table class="table table-bordered border-1" >
+                    <thead class=" text-center text-bold text-dark table-info">
                         <th>#</th>
                         <th>PlayerName</th>
                         <th>Requested Amount</th>
@@ -49,13 +73,13 @@
                     </thead>
                     <tbody>
                         @foreach ($withdraws as $withdraw)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
+                        <tr  class="text-center" style="font-size :13px !important">
+                            <td>{{ ($withdraws->currentPage() - 1) * $withdraws->perPage() + $loop->iteration }}</td>
                             <td>
                                 <span class="d-block">{{ $withdraw->user->name }}</span>
                             </td>
                             <td>{{ number_format($withdraw->amount) }}</td>
-                            <td>{{ $withdraw->user->paymentType->name }}</td>
+                            <td>{{ $withdraw->user?->paymentType?->name }}</td>
                             <td>{{$withdraw->user->account_name}}</td>
                             <td>{{$withdraw->user->account_number}}</td>
                             <td>
@@ -69,7 +93,7 @@
                             </td>
 
 
-                            <td>{{ $withdraw->created_at->format('d-m-Y') }}</td>
+                            <td>{{ $withdraw->created_at->format('d-m-Y H:i:s') }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <form action="{{ route('admin.agent.withdrawStatusUpdate', $withdraw->id) }}" method="post">

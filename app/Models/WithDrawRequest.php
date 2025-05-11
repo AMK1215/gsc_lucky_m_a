@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Admin\Bank;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\PaymentType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class WithDrawRequest extends Model
 {
@@ -18,4 +20,5 @@ class WithDrawRequest extends Model
     {
         return $this->belongsTo(User::class);
     }
+
 }

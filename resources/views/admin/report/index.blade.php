@@ -25,10 +25,35 @@
                             <h5 class="mb-0">Winlose Reports</h5>
                         </div>
                     </div>
+                    <form role="form" class="text-start mt-4"
+                    action="" method="GET">
+                    <div class="row ml-5">
+
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold" for="inputEmail1">From Date</label>
+                                <input type="date" class="form-control border border-1 border-secondary px-2"
+                                    name="start_date" value="{{ request()->start_date }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label text-dark fw-bold" for="inputEmail1">To Date</label>
+                                <input type="date" class="form-control border border-1 border-secondary px-2"
+                                    id="" name="end_date" value="{{ request()->end_date }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Search</button>
+                            <a href="" class="btn btn-warning"
+                                style="margin-top: 32px;">Refresh</a>
+                        </div>
+                    </div>
+                </form>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-flush" id="banners-search">
-                        <thead class="thead-light">
+                    <table class="table table-bordered border-1" >
+                        <thead class=" text-center text-bold text-dark table-info">
                             <tr>
                                 <th>AgentName</th>
                                 <th>UserName</th>
@@ -39,9 +64,9 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class=" text-center">
                             @foreach ($report as $row)
-                                <tr>
+                                <tr class="text-center">
                                     <td>{{ $row->user_name }}</td>
                                     <td>{{ $row->user_name }}</td>
                                     <td>{{ $row->total_count }}</td>
@@ -63,7 +88,7 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                        <tfoot>
+                        <tfoot class="text-center">
                             <th></th>
                             <th>Total Stake</th>
                             <th>{{ $total['totalstake'] }}</th>

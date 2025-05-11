@@ -42,13 +42,14 @@ class PlayerController extends Controller
             '403 Forbidden |You cannot  Access this page because you do not have permission'
         );
         //kzt
+
         $users = User::with('roles')
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', self::PLAYER_ROLE);
             })
             ->where('agent_id', auth()->id())
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
         return view('admin.player.index', compact('users'));
     }

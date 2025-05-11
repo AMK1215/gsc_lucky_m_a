@@ -15,61 +15,66 @@
 @endsection
 @section('content')
 <div class="row mt-4">
- <div class="col-12">
-  <div class="card">
-   <!-- Card header -->
-   <div class="card-header pb-0">
-    <div class="d-lg-flex">
-     <div>
-      <h5 class="mb-0">Transfer Log</h5>
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <!-- Card header -->
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center bg-light border-bottom py-3">
+          <h5 class="mb-0 text-dark">Transfer Logs</h5>
+          {{-- Optional Add Button (if you want to add transfer logs manually) --}}
+          {{-- <a href="#" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i> New Transfer
+          </a> --}}
+        </div>
 
-     </div>
-     <div class="ms-auto my-auto mt-lg-0 mt-4">
-      <div class="ms-auto my-auto">
-
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle">
+              <thead class="table-light text-center">
+                <tr>
+                  <th>#</th>
+                  <th>To User</th>
+                  <th>Amount</th>
+                  <th>Type</th>
+                  <th>Note</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if(isset($transferLogs) && count($transferLogs) > 0)
+                  @foreach ($transferLogs as $log)
+                    <tr class="text-center">
+                      <td>{{ ($transferLogs->currentPage() - 1) * $transferLogs->perPage() + $loop->iteration }}</td>
+                      <td>{{ $log->targetUser->name }}</td>
+                      <td class="{{ $log->type == 'withdraw' ? 'text-success' : 'text-danger' }}">
+                        {{ number_format(abs($log->amountFloat)) }}
+                      </td>
+                      <td>
+                        <span class="badge bg-{{ $log->type == 'withdraw' ? 'success' : 'danger' }}">
+                          {{ $log->type == 'withdraw' ? 'Deposit' : 'Withdraw' }}
+                        </span>
+                      </td>
+                      <td>{{ $log->note == 'null' ? '' : $log->note }}</td>
+                      <td>{{ $log->created_at->format("d/m/Y H:i:s") }}</td>
+                    </tr>
+                  @endforeach
+                @else
+                  <tr>
+                    <td colspan="6" class="text-center py-4 text-muted">
+                      There are no transfer logs available.
+                    </td>
+                  </tr>
+                @endif
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-end mt-3">
+            {{$transferLogs->links()}}
+            </div>
+          </div>
+        </div>
       </div>
-     </div>
     </div>
-   </div>
-   <div class="table-responsive">
-    <table class="table table-flush" id="users-search">
-     <thead class="thead-light">
-
-        <tr>
-            <th>Date</th>
-            <th>To User</th>
-            <th>Amount</th>
-            <th>Type</th>
-            <th>Note</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach($transferLogs as $log)
-            <tr>
-                <td>
-                  {{ $log->created_at }}
-                </td>
-                <td>{{ $log->targetUser->name }}</td>
-                <td>
-                  <div class="d-flex align-items-center text-{{$log->type =='withdraw' ? 'success' : 'danger'}} text-gradient text-sm font-weight-bold ms-auto"> {{ abs($log->amountFloat)}}</div>
-                </td>
-                <td>
-                    @if($log->type == 'withdraw')
-                        <p class="text-success font-weight-bold">Deposit</p>
-                    @else
-                        <p class="text-danger font-weight-bold">Withdraw</p>
-                    @endif
-                </td>
-                <td>{{$log->note  == 'null' ? '' : $log->note}}</td>
-            </tr>
-        @endforeach
-    </tbody>
-
-    </table>
-   </div>
   </div>
- </div>
-</div>
+
 @endsection
 @section('scripts')
 <script src="{{ asset('admin_app/assets/js/plugins/datatables.js') }}"></script>

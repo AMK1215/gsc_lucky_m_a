@@ -15,111 +15,101 @@
 @endsection
 @section('content')
 <div class="row mt-4">
-  <div class="col-12">
-    <div class="card">
-      <!-- Card header -->
-      <div class="card-header pb-0">
-        <div class="d-lg-flex">
-          <div>
-            <h5 class="mb-0">Player Dashboards</h5>
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <!-- Card header -->
+        <div class="card-header d-flex flex-wrap justify-content-between align-items-center bg-light border-bottom py-3">
+          <h5 class="mb-0 text-dark">Player Dashboards</h5>
+          <a href="{{ route('admin.player.create') }}" class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i> Create Player
+          </a>
+        </div>
 
-          </div>
-          <div class="ms-auto my-auto mt-lg-0 mt-4">
-            <div class="ms-auto my-auto">
-              <a href="{{ route('admin.player.create') }}" class="btn bg-gradient-primary btn-sm mb-0">+&nbsp; Create Player</a>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0 align-middle" >
+              <thead class="table-light text-center">
+                <tr>
+                  <th>#</th>
+                  <th>PlayerID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Status</th>
+                  <th>Balance</th>
+                  <th>Created At</th>
+                  <th>Actions</th>
+                  <th>Transaction</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if(isset($users) && count($users) > 0)
+                  @foreach ($users as $user)
+                    <tr class="text-center" style="font-size: 15px !important">
+                      <td>{{ ($users->currentPage() - 1) * $users->perPage() + $loop->iteration }}</td>
+                      <td>{{ $user->user_name }}</td>
+                      <td>{{ $user->name }}</td>
+                      <td>{{ $user->phone }}</td>
+                      <td>
+                        <span class="badge bg-{{ $user->status == 1 ? 'success' : 'danger' }}">
+                          {{ $user->status == 1 ? 'Active' : 'Inactive' }}
+                        </span>
+                      </td>
+                      <td>{{ number_format($user->balanceFloat, 2) }}</td>
+                      <td>{{ $user->created_at->setTimezone('Asia/Yangon')->format('d-m-Y H:i:s') }}</td>
+                      <td>
+                        <div class="d-flex justify-content-center gap-2">
+                          <a onclick="event.preventDefault(); document.getElementById('banUser-{{ $user->id }}').submit();" href="#" class="btn btn-outline-{{ $user->status == 1 ? 'success' : 'danger' }} btn-sm" data-bs-toggle="tooltip" title="{{ $user->status == 1 ? 'Active Player' : 'Inactive Player' }}">
+                            <i class="fa-solid {{ $user->status == 1 ? 'fa-user' : 'fa-user-slash' }}"></i>
+                          </a>
+                          <form id="banUser-{{ $user->id }}" action="{{ route('admin.player.ban', $user->id) }}" method="post" class="d-none">
+                            @csrf
+                            @method('PUT')
+                          </form>
+
+                          <a href="{{ route('admin.player.getChangePassword', $user->id) }}" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Change Password">
+                            <i class="fa fa-lock"></i>
+                          </a>
+
+                          <a href="{{ route('admin.player.edit', $user->id) }}" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Edit Player">
+                            <i class="fa fa-pen-to-square"></i>
+                          </a>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                          <a href="{{ route('admin.player.getCashIn', $user->id) }}" class="btn btn-success btn-sm" data-bs-toggle="tooltip" title="Deposit to Player">
+                            <i class="fas fa-plus text-white me-1"></i> Dep
+                          </a>
+                          <a href="{{ route('admin.player.getCashOut', $user->id) }}" class="btn btn-warning btn-sm" data-bs-toggle="tooltip" title="Withdraw from Player">
+                            <i class="fa fa-minus text-white me-1"></i> WDL
+                          </a>
+                          <a href="{{ route('admin.logs', $user->id) }}" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="Logs">
+                            <i class="fa fa-right-left text-white me-1"></i> Logs
+                          </a>
+                          <a href="{{ route('admin.transferLogDetail', $user->id) }}" class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" title="Transfer Logs">
+                            <i class="fas fa-right-left text-white me-1"></i> Transfer
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                  @endforeach
+                @else
+                  <tr>
+                    <td colspan="9" class="text-center py-4 text-muted">
+                      There are no players available.
+                    </td>
+                  </tr>
+                @endif
+              </tbody>
+            </table>
+            <div class="d-flex justify-content-end mt-3">
+            {{$users->links()}}
             </div>
           </div>
         </div>
       </div>
-      <div class="table-responsive">
-        <table class="table table-flush" id="users-search">
-          <thead class="thead-light">
-            <th>#</th>
-            <th>PlayerID</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>Status</th>
-            <th>Balance</th>
-            <th>CreatedAt</th>
-            <th>Action</th>
-            <th>Transaction</th>
-          </thead>
-          <tbody>
-          {{-- kzt --}}
-            @if(isset($users))
-            @if(count($users)>0)
-            @foreach ($users as $user)
-            <tr>
-              <td>{{ $loop->iteration }}</td>
-              <td>
-                <span class="d-block">{{ $user->user_name }}</span>
-
-              </td>
-              <td>{{$user->name}}</td>
-              <td>{{ $user->phone }}</td>
-              <td>
-              <small class="badge bg-gradient-{{ $user->status == 1 ? 'success' : 'danger' }}">{{ $user->status == 1 ? "active" : "inactive" }}</small>
-              </td>
-              <td>{{number_format($user->balanceFloat, 2) }}</td>
-                <td>{{ $user->created_at->setTimezone('Asia/Yangon')->format('d-m-Y H:i:s') }}</td>
-              <td>
-                @if ($user->status == 1)
-                <a onclick="event.preventDefault(); document.getElementById('banUser-{{ $user->id }}').submit();" class="me-2" href="#" data-bs-toggle="tooltip" data-bs-original-title="Active Player">
-                <i class="fa-solid fa-user text-success" style="font-size: 20px;"></i>
-                </a>
-                @else
-                <a onclick="event.preventDefault(); document.getElementById('banUser-{{ $user->id }}').submit();" class="me-2" href="#" data-bs-toggle="tooltip" data-bs-original-title="InActive Player">
-                <i class="fa fa-user-slash text-danger" style="font-size: 20px;"></i>
-                </a>
-                @endif
-                <form class="d-none" id="banUser-{{ $user->id }}" action="{{ route('admin.player.ban', $user->id) }}" method="post">
-                  @csrf
-                  @method('PUT')
-                </form>
-                <a class="me-1" href="{{ route('admin.player.getChangePassword', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Change Password">
-                  <i class="fa fa-lock text-info" style="font-size: 20px;"></i>
-                </a>
-                <a class="me-1" href="{{ route('admin.player.edit', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Edit Player">
-                  <i class="fa fa-pen-to-square text-info" style="font-size: 20px;"></i>
-                </a>
-
-              </td>
-              <td>
-                <a href="{{ route('admin.player.getCashIn', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Deposit To Player" class="btn btn-info btn-sm">
-                  <i class="fas fa-plus text-white me-1"></i>
-                  Dep
-                </a>
-                <a href="{{ route('admin.player.getCashOut', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="WithDraw To Player" class="btn btn-info btn-sm">
-                <i class="fa fa-minus text-white me-1"></i>
-                  WDL
-                </a>
-           
-                <a href="{{ route('admin.logs', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Reports" class="btn btn-info btn-sm">
-                  <i class="fa fa-right-left text-white me-1"></i>
-                  Logs
-                </a>
-                <a href="{{ route('admin.transferLogDetail', $user->id) }}" data-bs-toggle="tooltip" data-bs-original-title="Reports" class="btn btn-info btn-sm">
-                  <i class="fas fa-right-left text-white me-1"></i>
-                  transferLogs
-                </a>
-          </td>
-            </tr>
-            @endforeach
-            @else
-            <tr>
-                <td col-span=8>
-                    There was no Players.
-                </td>
-            </tr>
-            @endif
-            @endif
-
-          </tbody>
-        </table>
-      </div>
     </div>
   </div>
-</div>
 @endsection
 @section('scripts')
 <script src="{{ asset('admin_app/assets/js/plugins/datatables.js') }}"></script>

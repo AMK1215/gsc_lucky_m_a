@@ -29,4 +29,5 @@ class DepositRequest extends Model
     {
         return $this->belongsTo(PaymentType::class, 'agent_payment_type_id');
     }
+
 }
